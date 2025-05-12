@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char matrix[5][5];
+
+void createMatrix(char key[]) {
+    int alpha[26] = {0}, i, j, k = 0;
+    char c;
+
+    for (i = 0; i < 5; i++)
+        for (j = 0; j < 5; j++)
+            matrix[i][j] = 0;
+
+    for (i = 0; key[i]; i++) {
+        c = tolower(key[i]);
+        if (c == 'j') c = 'i';
+        if (!alpha[c - 'a']) {
+            matrix[k / 5][k % 5] = c;
+            alpha[c - 'a'] = 1;
+            k++;
+        }
+    }
+
+    for (c = 'a'; c <= 'z'; c++) {
+        if (c == 'j') continue;
+        if (!alpha[c - 'a']) {
+            matrix[k / 5][k % 5] = c;
+            alpha[c - 'a'] = 1;
+            k++;
+        }
+    }
+}
+
+void getPosition(char c, int *row, int *col) {
+    int i, j;
+    if (c == 'j') c = 'i';
+    for (i = 0; i < 5; i++)
+        for (j = 0; j < 5; j++)
+            if (matrix[i][j] == c) {
+                *row = i;
+                *col = j;
+                return;
+            }
+}
+
+void encrypt(char msg[]) {
+    int i, r1, c1, r2, c2;
+    char c1_char, c2_char;
+
+    for (i = 0; msg[i]; i += 2) {
+        c1_char = msg[i];
+        c2_char = (msg[i + 1] == '\0') ? 'x' : msg[i + 1];
+        if (c1_char == c2_char) c2_char = 'x';
+
+        getPosition(c1_char, &r1, &c1);
+        getPosition(c2_char, &r2, &c2);
+
+        if (r1 == r2) {
+            printf("%c%c ", matrix[r1][(c1 + 1) % 5], matrix[r2][(c2 + 1) % 5]);
+        } else if (c1 == c2) {
+            printf("%c%c ", matrix[(r1 + 1) % 5][c1], matrix[(r2 + 1) % 5][c2]);
+        } else {
+            printf("%c%c ", matrix[r1][c2], matrix[r2][c1]);
+        }
+    }
+}
+
+int main() {
+    char key[] = "monarchy";
+    char msg[] = "instruments";
+
+    createMatrix(key);
+    encrypt(msg);
+    return 0;
+}
