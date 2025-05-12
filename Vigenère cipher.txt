@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+
+void encrypt(char *msg, int key[]) {
+    for (int i = 0; msg[i]; i++) {
+        char ch = msg[i];
+        if (ch >= 'a' && ch <= 'z') {
+            printf("%c", ((ch - 'a' + key[i]) % 26) + 'a');
+        } else {
+            printf("%c", ch);
+        }
+    }
+}
+
+int main() {
+    char msg[] = "hello";
+    int key[] = {3, 19, 5, 11, 8}; // Random numbers for one-time pad
+
+    encrypt(msg, key);
+    return 0;
+}
